@@ -76,6 +76,11 @@ namespace GitTfs.Test.Integration
             return Repository(repodir).Config.Get<T>(key, ConfigurationLevel.Local).Value;
         }
 
+        public string GetHeadRef(string repodir)
+        {
+            return Repository(repodir).Head.CanonicalName;
+        }
+
         public void SetupGitRepo(string path, Action<RepoBuilder> buildIt)
         {
             var fullPath = Path.Combine(Workdir, path);

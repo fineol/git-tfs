@@ -37,9 +37,9 @@ namespace GitTfs.Test.Integration
                 r.Changeset(1, "Project created from template", DateTime.Parse("2012-01-01 12:12:12 -05:00"))
                     .Change(TfsChangeType.Add, TfsItemType.Folder, "$/MyProject");
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
             h.AssertEmptyWorkspace("MyProject");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "4053764b2868a2be71ae7f5f113ad84dff8a052a",
                 tree: "4b825dc642cb6eb9a060e54bf8d69288fbee4904");
         }
@@ -56,11 +56,11 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/MyProject/Folder/File.txt", "File contents")
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/MyProject/README", "tldr");
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
             h.AssertCommitMessage("MyProject", "HEAD", "First commit", "", "git-tfs-id: [" + h.TfsUrl + "]$/MyProject;C2");
             h.AssertFileInWorkspace("MyProject", "Folder/File.txt", "File contents");
             h.AssertFileInWorkspace("MyProject", "README", "tldr");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "d64d883266eca65bede947c79529318718a0d8eb",
                 tree: "41ab05d8f2a0f7f7f3a39c623e94fee68f64797e");
         }
@@ -76,9 +76,9 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Add, TfsItemType.Folder, "$/MyProject/ÆØÅ")
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/MyProject/ÆØÅ/äöü.txt", "File contents");
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
             h.AssertFileInWorkspace("MyProject", "ÆØÅ/äöü.txt", "File contents");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "4faa9a5f32e6af118b84071a537228d3f7da7d9d",
                 tree: "14f207f532105e6df76cf69d6481d84b9e5b17ad");
         }
@@ -94,9 +94,9 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Add, TfsItemType.Folder, "$/MyProject/Folder")
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/MyProject/Folder/File.txt", "Blåbærsyltetøy er godt!"); // "Blueberry jam is tasty!"
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
             h.AssertFileInWorkspace("MyProject", "Folder/File.txt", "Blåbærsyltetøy er godt!");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "5bd7660fa145ce0c38b5c279502478ce205a0cfb",
                 tree: "57336850a107184ca05911c9ac6cba8d1fd212fc");
         }
@@ -112,10 +112,10 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Add, TfsItemType.Folder, "$/MyProject/Folder")
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/MyProject/Folder/File.txt", "File contents");
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
 
             h.AssertCommitMessage("MyProject", "HEAD", "Blåbærsyltetøy", "", "git-tfs-id: [http://does/not/matter]$/MyProject;C2");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "cd14e6e28abffd625412dae36d9d9659bf6cb68c",
                 tree: "3f8b26f2594b7ca2370388c99739e56a64954f00");
         }
@@ -135,9 +135,9 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Edit, TfsItemType.File, "$/myproject/foo/BAR/file.txt", "Updated file contents in path with different casing")
                     .Change(TfsChangeType.Add, TfsItemType.File, "$/myproject/FOO/bar/file2.txt", "Another file in the same folder, but with different casing");
             });
-            h.Run("clone", h.TfsUrl, "$/MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject");
             h.AssertCleanWorkspace("MyProject");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "175420603e41cd0175e3c25581754726bd21cb96",
                 tree: "c962b51eb5397f1b98f662c9d43e6be13b7065f1");
         }
@@ -179,10 +179,10 @@ namespace GitTfs.Test.Integration
         {
             CreateFakeRepositoryWithMergeChangeset();
 
-            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject", "--branches=all", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject", "--branches=all");
 
             h.AssertFileInWorkspace("MyProject", "File.txt", "File contents_main_branch=>_merge");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "be59d37d08a0cc78916f04a256dc52f6722f800c",
                 tree: "cf8a497b3a40028bee363a613fe156b9d37350bb");
             AssertNewClone("MyProject", new[] { "refs/heads/Branch", "refs/remotes/tfs/Branch" },
@@ -195,10 +195,10 @@ namespace GitTfs.Test.Integration
         {
             CreateFakeRepositoryWithMergeChangeset();
 
-            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject");
 
             h.AssertFileInWorkspace("MyProject", "File.txt", "File contents_main_branch=>_merge");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "be59d37d08a0cc78916f04a256dc52f6722f800c",
                 tree: "cf8a497b3a40028bee363a613fe156b9d37350bb");
             AssertNewClone("MyProject", new[] { "refs/remotes/tfs/Branch" },
@@ -215,9 +215,9 @@ namespace GitTfs.Test.Integration
                 vtccds.Prepare(r);
             });
             h.TfsUrl = "https://tfs.codeplex.com:443/tfs/TFS16";
-            h.Run("clone", h.TfsUrl, "$/vtccds/trunk", "Vtccds", "--branches=all", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/vtccds/trunk", "Vtccds", "--branches=all");
 
-            AssertNewClone("Vtccds", new[] { "refs/heads/master", "refs/remotes/tfs/default" }, commit: "e7d54b14fbdcbbc184d58e82931b7c1ac4a2be70");
+            AssertNewClone("Vtccds", new[] { h.GetHeadRef("Vtccds"), "refs/remotes/tfs/default" }, commit: "e7d54b14fbdcbbc184d58e82931b7c1ac4a2be70");
 
             AssertNewClone("Vtccds", new[] { "refs/heads/b1", "refs/remotes/tfs/b1" }, commit: "3cdb2a311ac7cbda1e892a9b3371a76c871a696a");
 
@@ -240,15 +240,18 @@ namespace GitTfs.Test.Integration
         {
             CreateFakeRepositoryWithMergeChangeset();
 
-            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject", "--branches=none", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyProject/Main", "MyProject", "--branches=none");
 
             h.AssertFileInWorkspace("MyProject", "File.txt", "File contents_main_branch=>_merge");
-            AssertNewClone("MyProject", RefsInNewClone,
+            AssertNewClone("MyProject", RefsInNewClone("MyProject"),
                 commit: "843a915aea98894fef51379d68a0f309e8537dd5",
                 tree: "cf8a497b3a40028bee363a613fe156b9d37350bb");
         }
 
-        private readonly string[] RefsInNewClone = new[] { "HEAD", "refs/heads/master", "refs/remotes/tfs/default" };
+        private string[] RefsInNewClone(string project)
+        {
+            return new[] { "HEAD", h.GetHeadRef(project), "refs/remotes/tfs/default" };
+        }
 
         /// <summary>
         /// Verify repo layout.
@@ -414,7 +417,8 @@ namespace GitTfs.Test.Integration
                     .Change(TfsChangeType.Branch, TfsItemType.Folder, "$/MyTeamProject/Branch");
             });
 
-            h.Run("clone", h.TfsUrl, "$/MyTeamProject/Root", "MyTeamProject", "--branches=all", "--initial-branch=master");
+            h.Run("clone", h.TfsUrl, "$/MyTeamProject/Root", "MyTeamProject", "--branches=all");
+            string initialBranchRef = h.GetHeadRef("MyTeamProject");
 
             h.AssertGitRepo("MyTeamProject");
 
@@ -445,7 +449,7 @@ namespace GitTfs.Test.Integration
             {
                 "HEAD",
                 "refs/remotes/tfs/default",
-                "refs/heads/master",
+                initialBranchRef,
                 "refs/heads/tfs/branch",
                 "refs/heads/Branch"
             };
