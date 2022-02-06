@@ -45,8 +45,8 @@ namespace GitTfs.Core
         string TfsPassword { get; set; }
         IGitRepository Repository { get; }
         ITfsHelper Tfs { get; }
-        int MaxChangesetId { get; set; }
-        string MaxCommitHash { get; set; }
+        int MaxChangesetId { get; }
+        string MaxCommitHash { get; }
         string RemoteRef { get; }
         bool IsSubtree { get; }
         bool IsSubtreeOwner { get; }

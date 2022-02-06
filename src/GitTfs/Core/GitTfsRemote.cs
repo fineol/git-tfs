@@ -167,7 +167,6 @@ namespace GitTfs.Core
         public int MaxChangesetId
         {
             get { InitHistory(); return maxChangesetId.Value; }
-            set { maxChangesetId = value; }
         }
 
         // MaxCommitHash is the hash of the most recent commit of any type on the remote
@@ -178,7 +177,6 @@ namespace GitTfs.Core
         public string MaxCommitHash
         {
             get { InitHistory(); return maxCommitHash; }
-            set { maxCommitHash = value; }
         }
 
         private TfsChangesetInfo GetTfsChangesetById(int id)
@@ -193,20 +191,20 @@ namespace GitTfs.Core
                 var mostRecentUpdate = Repository.GetLastParentTfsCommits(RemoteRef).FirstOrDefault();
                 if (mostRecentUpdate != null)
                 {
-                    MaxCommitHash = mostRecentUpdate.GitCommit;
-                    MaxChangesetId = mostRecentUpdate.ChangesetId;
+                    maxCommitHash = mostRecentUpdate.GitCommit;
+                    maxChangesetId = mostRecentUpdate.ChangesetId;
                 }
                 else
                 {
                     // Use 0 as the flag to indicate that no TFS changesets have yet been committed
-                    MaxChangesetId = 0;
+                    maxChangesetId = 0;
 
                     // Manage the special case where commits were made to the repository before the
                     // first commit from TFS (e.g. .gitignore was committed during initialization)
                     var gitCommit = Repository.GetCommit(RemoteRef);
                     if (gitCommit != null)
                     {
-                        MaxCommitHash = gitCommit.Sha;
+                        maxCommitHash = gitCommit.Sha;
                     }
                 }
             }
@@ -798,8 +796,8 @@ namespace GitTfs.Core
 
         public void UpdateTfsHead(string commitHash, int changesetId)
         {
-            MaxCommitHash = commitHash;
-            MaxChangesetId = changesetId;
+            maxCommitHash = commitHash;
+            maxChangesetId = changesetId;
             Repository.UpdateRef(RemoteRef, MaxCommitHash, "C" + MaxChangesetId);
             if (Autotag)
                 Repository.UpdateRef(TagPrefix + "C" + MaxChangesetId, MaxCommitHash);

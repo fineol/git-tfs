@@ -87,7 +87,7 @@ namespace GitTfs.Test.Commands
             newBranchRemoteMock.Name = nameof(newBranchRemoteMock);
             newBranchRemoteMock.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>()))
                 .Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
-            newBranchRemoteMock.Object.MaxCommitHash = "sha1AfterFetch";
+            newBranchRemoteMock.SetupGet(r => r.MaxCommitHash).Returns("sha1AfterFetch");
 
             Assert.Equal(GitTfsExitCodes.OK, mocks.ClassUnderTest.Run("$/MyProject/MyBranch", expectedGitBranchName));
 
@@ -204,7 +204,7 @@ namespace GitTfs.Test.Commands
             newBranch1RemoteMock.Name = nameof(newBranch1RemoteMock);
             newBranch1RemoteMock.Setup(r => r.RemoteRef).Returns("refs/remote/tfs/" + GIT_BRANCH_TO_INIT1);//.Verifiable();
             newBranch1RemoteMock.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
-            newBranch1RemoteMock.Object.MaxCommitHash = "ShaAfterFetch_Branch1";
+            newBranch1RemoteMock.SetupGet(r => r.MaxCommitHash).Returns("ShaAfterFetch_Branch1");
             #endregion
 
             #region Branch2
@@ -218,13 +218,13 @@ namespace GitTfs.Test.Commands
             newBranch2RemoteMock.Name = nameof(newBranch2RemoteMock);
             newBranch2RemoteMock.Setup(r => r.RemoteRef).Returns("refs/remote/tfs/" + GIT_BRANCH_TO_INIT2);//.Verifiable();
             newBranch2RemoteMock.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
-            newBranch2RemoteMock.Object.MaxCommitHash = "ShaAfterFetch_Branch2";
+            newBranch2RemoteMock.SetupGet(r => r.MaxCommitHash).Returns("ShaAfterFetch_Branch2");
             #endregion
 
             trunkGitTfsRemote.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
             trunkGitTfsRemote.Setup(t => t.InitBranch(It.IsAny<RemoteOptions>(), tfsPathBranch1, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IRenameResult>())).Returns(newBranch1RemoteMock.Object);
             trunkGitTfsRemote.Setup(t => t.InitBranch(It.IsAny<RemoteOptions>(), tfsPathBranch2, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IRenameResult>())).Returns(newBranch2RemoteMock.Object);
-            trunkGitTfsRemote.Object.MaxChangesetId = 2000; //Simulate fetch already done
+            trunkGitTfsRemote.SetupGet(r => r.MaxChangesetId).Returns(2000); //Simulate fetch already done
             Assert.Equal(GitTfsExitCodes.OK, mocks.ClassUnderTest.Run());
 
             gitRepositoryMock.Verify();
@@ -264,7 +264,7 @@ namespace GitTfs.Test.Commands
             newBranch1RemoteMock.Name = nameof(newBranch1RemoteMock);
             newBranch1RemoteMock.Setup(r => r.RemoteRef).Returns("refs/remote/tfs/" + GIT_BRANCH_TO_INIT1);//.Verifiable();
             newBranch1RemoteMock.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
-            newBranch1RemoteMock.Object.MaxCommitHash = "ShaAfterFetch_Branch1";
+            newBranch1RemoteMock.SetupGet(r => r.MaxCommitHash).Returns("ShaAfterFetch_Branch1");
             #endregion
 
             #region Branch2
@@ -277,14 +277,14 @@ namespace GitTfs.Test.Commands
             newBranch2RemoteMock.Name = nameof(newBranch2RemoteMock);
             newBranch2RemoteMock.Setup(r => r.RemoteRef).Returns("refs/remote/tfs/" + GIT_BRANCH_TO_INIT2);//.Verifiable();
             newBranch2RemoteMock.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
-            newBranch2RemoteMock.Object.MaxCommitHash = "ShaAfterFetch_Branch2";
+            newBranch2RemoteMock.SetupGet(r => r.MaxCommitHash).Returns("ShaAfterFetch_Branch2");
             #endregion
 
 
             trunkGitTfsRemote.Setup(r => r.Fetch(It.IsAny<bool>(), It.IsAny<int>(), It.IsAny<IRenameResult>())).Returns(new GitTfsRemote.FetchResult() { IsSuccess = true }).Verifiable();
             trunkGitTfsRemote.Setup(t => t.InitBranch(It.IsAny<RemoteOptions>(), tfsPathBranch1, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IRenameResult>())).Returns(newBranch1RemoteMock.Object);
             trunkGitTfsRemote.Setup(t => t.InitBranch(It.IsAny<RemoteOptions>(), tfsPathBranch2, It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<string>(), It.IsAny<IRenameResult>())).Returns(newBranch2RemoteMock.Object);
-            trunkGitTfsRemote.Object.MaxChangesetId = 2000; //Simulate fetch already done
+            trunkGitTfsRemote.SetupGet(p => p.MaxChangesetId).Returns(2000); //Simulate fetch already done
             Assert.Equal(GitTfsExitCodes.OK, mocks.ClassUnderTest.Run());
 
             gitRepository.Verify(x => x.AssertValidBranchName(GIT_BRANCH_TO_INIT3), Times.Never);
